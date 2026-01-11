@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZERO SIX SKY LOUNGE - ORDER</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#0b1c2d;
+  color:#ffffff;
+  padding:12px
+}
+
+h1{
+  font-size:20px;
+  text-align:center;
+  color:#64b5f6
+}
+
+h2{
+  font-size:14px;
+  text-align:center;
+  margin-bottom:15px;
+  color:#cfd8dc
+}
+
+.box{
+  background:#13293d;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.3)
+}
+
+label{
+  font-size:13px;
+  color:#90caf9
+}
+
+input,textarea,select{
+  width:100%;
+  padding:8px;
+  border-radius:8px;
+  border:none;
+  margin-top:5px;
+  margin-bottom:10px;
+  font-size:14px;
+  background:#0b1c2d;
+  color:#fff
+}
+
+input::placeholder,
+textarea::placeholder{
+  color:#90a4ae
+}
+
+.category{
+  background:linear-gradient(135deg,#1e88e5,#42a5f5);
+  color:#fff;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:14px;
+  box-shadow:0 3px 8px rgba(0,0,0,.3)
+}
+
+.panel{
+  display:none;
+  padding:8px
+}
+
+.menu{
+  border-bottom:1px dashed #355c7d;
+  padding-bottom:8px;
+  margin-bottom:8px;
+  font-size:13px
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:6px
+}
+
+button{
+  background:#64b5f6;
+  border:none;
+  padding:4px 9px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:14px;
+  color:#0b1c2d;
+  font-weight:bold
+}
+
+button:hover{
+  background:#90caf9
+}
+
+.qty{
+  margin:0 6px;
+  color:#ffd166;
+  font-weight:bold
+}
+
+.total-box{
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+  color:#ffd166;
+  margin-top:10px;
+  background:linear-gradient(135deg,#13293d,#0b1c2d)
+}
+
+.send{
+  width:100%;
+  padding:12px;
+  font-size:15px;
+  background:linear-gradient(135deg,#1e88e5,#64b5f6);
+  border:none;
+  border-radius:10px;
+  color:#fff;
+  font-weight:bold
+}
+
+.send:hover{
+  opacity:.9
+}
+</style>
+</head>
+
+<body>
+
+<h1>ZERO SIX SKY LOUNGE</h1>
+<h2>Reservasi & Order Menu</h2>
+
+<div class="box">
+<label>Nama Pembeli</label>
+<input id="nama" placeholder="Nama lengkap">
+
+<label>Tanggal Reservasi</label>
+<input type="date" id="tanggal">
+
+<label>Jam Reservasi</label>
+<input type="time" id="jam">
+
+<label>Event</label>
+<input id="eventName" placeholder="Contoh: Birthday Party">
+
+<label>Lokasi</label>
+<select id="lokasi">
+<option value="">Pilih Lokasi</option>
+<option>Indoor</option>
+<option>Outdoor</option>
+</select>
+
+<label>Jumlah Pax</label>
+<input type="number" id="pax" min="1" placeholder="Jumlah orang">
+</div>
+
+<div class="box" id="menu"></div>
+
+<div class="box total-box">
+TOTAL PESANAN<br>
+Rp <span id="total">0</span>
+</div>
+
+<div class="box">
+<label>Catatan Umum</label>
+<textarea id="note" placeholder="Catatan tambahan..."></textarea>
+<button class="send" onclick="sendWA()">Kirim ke WhatsApp</button>
+</div>
+
+<script>
+const data={
+"MAGICAL PASTA":{
+"Carbonara":25000,
+"Garlic Butter Cheese":20000,
+"Bolognese":20000
+},
+"MAGICAL MENU":{
+"Caesar Salad":25000,
+"Wan Pixie Sandwich":20000,
+"Fairy Sweet Fruit Mix":20000
+},
+"MAGICAL SMOOTHIES":{
+"Moon Berry Manggo Spell":25000,
+"Apple Peach Fairy Glow":25000,
+"Pink Pixie Delight":25000,
+"Echanted Choco Avocado":25000,
+"Additional Keju / Coklat":5000
+},
+"MAGICAL DRINK":{
+"Dreamy Kissies":18000,
+"Rainbow Paradise":18000,
+"Blue Lemonade":18000,
+"Butterfly Blooms":18000
+},
+"TEA SERIES":{
+"Jasmine Tea (HOT)":15000,
+"Jasmine Tea (ICE)":15000,
+"Chamomile Tea (HOT)":15000,
+"Chamomile Tea (ICE)":15000,
+"Butterfly Pea Tea (HOT)":15000,
+"Butterfly Pea Tea (ICE)":15000,
+"Peach Tea (HOT)":15000,
+"Peach Tea (ICE)":15000,
+"Lemon Tea (HOT)":15000,
+"Lemon Tea (ICE)":15000,
+"Lychee Tea (HOT)":15000,
+"Lychee Tea (ICE)":15000,
+"Thai Tea (HOT)":15000,
+"Thai Tea (ICE)":15000,
+"Green Thai Tea (HOT)":15000,
+"Green Thai Tea (ICE)":15000,
+"Tea Party (ONLY HOT)":50000
+},
+"CITA RASA NUSANTARA":{
+"Nasi Ayam Sambal Hijau":20000,
+"Nasi Ayam Tempong":25000,
+"Nasi Bakar":15000,
+"Sego Sambel":10000,
+"Nasi Tahu & Tempe Sambal Seger":10000
+},
+"SPECIAL FROM US":{
+"Indomie 06 Kuah":8000,
+"Indomie 06 Goreng":8000,
+"Indomie Special 06 Kuah":12000,
+"Indomie Special 06 Goreng":12000,
+"Indomie Super Hot Lv 1-5 Kuah":14000,
+"Indomie Super Hot Lv 1-5 Goreng":14000,
+"Indomie Super Hot Lv 6-10 Kuah":14000,
+"Indomie Super Hot Lv 6-10 Goreng":14000,
+"Indomie Goreng Sambal Matah":14000,
+"Indomie Goreng Chicken Blackpepper":15000,
+"06 Squash Drink":8000,
+"Banana Split 06":10000
+},
+"SPECIAL ICE":{
+"Es Tape Ketan Ireng":20000,
+"Mineral Water":5000,
+"Charge Take Away":1000
+}
+};
+
+let cart={},total=0;
+
+function updateTotal(){
+document.getElementById("total").innerText=total.toLocaleString();
+}
+
+function render(){
+let html="",i=0;
+for(let c in data){
+html+=`<div class="category" onclick="toggle(${i})">${c}</div>
+<div class="panel" id="p${i}">`;
+for(let m in data[c]){
+let id=m.replace(/[^a-z0-9]/gi,'_');
+html+=`
+<div class="menu">
+<div class="row">
+<span>${m}<br>Rp ${data[c][m].toLocaleString()}</span>
+<div>
+<button onclick="add('${m}',${data[c][m]},'${id}')">+</button>
+<span class="qty" id="q_${id}">0</span>
+<button onclick="remove('${m}',${data[c][m]},'${id}')">-</button>
+</div>
+</div>
+<textarea id="n_${id}" placeholder="Catatan menu ini..."></textarea>
+</div>`;
+}
+html+=`</div>`;
+i++;
+}
+menu.innerHTML=html;
+}
+render();
+
+function toggle(i){
+document.querySelectorAll(".panel").forEach((p,x)=>{
+p.style.display=(x===i && p.style.display!=="block")?"block":"none";
+});
+}
+
+function add(n,p,id){
+if(!cart[n])cart[n]={q:0,p,id};
+cart[n].q++; total+=p;
+document.getElementById("q_"+id).innerText=cart[n].q;
+updateTotal();
+}
+
+function remove(n,p,id){
+if(cart[n] && cart[n].q>0){
+cart[n].q--; total-=p;
+document.getElementById("q_"+id).innerText=cart[n].q;
+updateTotal();
+}
+}
+
+function sendWA(){
+if(!nama.value||!tanggal.value||!jam.value||!eventName.value||!lokasi.value||!pax.value){
+alert("Lengkapi data reservasi");
+return;
+}
+
+let t=`RESERVASI ZERO SIX SKY LOUNGE%0A%0A`;
+t+=`Nama: ${nama.value}%0A`;
+t+=`Tanggal: ${tanggal.value}%0A`;
+t+=`Jam: ${jam.value}%0A`;
+t+=`Event: ${eventName.value}%0A`;
+t+=`Lokasi: ${lokasi.value}%0A`;
+t+=`Pax: ${pax.value}%0A%0A`;
+
+let i=1;
+for(let k in cart){
+if(cart[k].q>0){
+let n=document.getElementById("n_"+cart[k].id).value;
+t+=`${i}. ${k} x${cart[k].q} = Rp ${cart[k].q*cart[k].p}%0A`;
+if(n)t+=`   Catatan: ${n}%0A`;
+i++;
+}}
+if(note.value)t+=`%0ACatatan Umum:%0A${note.value}`;
+t+=`%0A%0ATOTAL: Rp ${total.toLocaleString()}`;
+
+window.open(`https://wa.me/6285175313330?text=${t}`);
+}
+</script>
+
+</body>
+</html>
